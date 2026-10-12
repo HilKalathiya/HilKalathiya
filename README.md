@@ -1,74 +1,59 @@
-<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg">
+  <img src="assets/header-light.svg" alt="Hil Kalathiya. Machine learning for healthcare and data systems." width="100%">
+</picture>
 
-<a href="https://hil-portfolio.vercel.app/"><img src="assets/hero.svg" alt="Hil Kalathiya: AI / ML Engineer building agentic systems, RAG and forecasting" width="100%"></a>
+[Portfolio](https://hil-portfolio.vercel.app/) &nbsp;|&nbsp; [LinkedIn](https://www.linkedin.com/in/hil-kalathiya-47679331b)
 
-<br><br>
+I'm looking for machine learning internships for 2026–27.
 
-<a href="https://hil-portfolio.vercel.app/"><img src="assets/btn_portfolio.svg" alt="Portfolio" height="56"></a>&nbsp;&nbsp;
-<a href="https://www.linkedin.com/in/hil-kalathiya-47679331b"><img src="assets/btn_linkedin.svg" alt="LinkedIn" height="56"></a>
+## Selected work
 
-<br><br>
-
-<img src="assets/metrics.svg" alt="2x Smart India Hackathon Top 25, 8.55 CGPA, 80%+ anomaly recall, 18 public repositories" width="100%">
-
-</div>
-
-<br>
-
-**B.Tech ICT student at PDEU (Class of 2027)** who builds AI systems that don't just predict, they **retrieve, reason and act**. I like messy, real-world problems: take an existing system that's missing its intelligence layer, and build it.
-
-<br>
-
-<div align="center">
-
-<img src="assets/h_work.svg" alt="01 Flagship Work" width="100%">
-
-<br><br>
-
-<a href="https://github.com/HilKalathiya/MDT-AI-Copilot"><img src="assets/flagship.svg" alt="MDT AI Copilot: agentic RAG and ML analytics on a 5G measurement pipeline" width="100%"></a>
-
-<br><br>
-
-<img src="assets/h_more.svg" alt="02 More Systems" width="100%">
-
-<br><br>
-
-<table>
-<tr>
-<td width="50%" valign="top"><a href="https://github.com/HilKalathiya/open-env-nuclei"><img src="assets/card_openenv.svg" alt="OpenEnv: RL environment where an LLM agent learns to clean data" width="100%"></a></td>
-<td width="50%" valign="top"><a href="https://github.com/HilKalathiya/HospitalOps-AI"><img src="assets/card_hospital.svg" alt="HospitalOps AI: hospital operations decision-support platform" width="100%"></a></td>
-</tr>
-<tr>
-<td width="50%" valign="top"><a href="https://github.com/HilKalathiya/misinformation_ai_hil"><img src="assets/card_misinfo.svg" alt="Misinformation AI: AI-powered tool for combating misinformation" width="100%"></a></td>
-<td width="50%" valign="top"><img src="assets/card_crohn.svg" alt="Crohn's Severity ML: early prediction of Crohn's disease severity" width="100%"></td>
-</tr>
-</table>
-
-<sub>OpenEnv: <a href="https://chetangadhiya017-data-cleaning-env.hf.space">live demo ↗</a> · co-built with <a href="https://github.com/chetangadhiya5062">Chetan Gadhiya</a> and Sahaj Saliya</sub>
+<a href="https://github.com/HilKalathiya/HospitalOps-AI">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/hospitalops-dark.svg">
+  <img src="assets/hospitalops-light.svg" alt="HospitalOps AI: decision support for hospital operations, 9 of 13 build steps shipped" width="100%">
+</picture>
+</a>
 
 <br>
 
-<img src="assets/h_stack.svg" alt="03 Engineering Stack" width="100%">
+<a href="https://github.com/HilKalathiya/open-env-nuclei">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/openenv-dark.svg">
+  <img src="assets/openenv-light.svg" alt="OpenEnv: a reinforcement-learning environment where an LLM agent learns to clean data" width="100%">
+</picture>
+</a>
 
-<br><br>
+[Try the OpenEnv live demo](https://chetangadhiya017-data-cleaning-env.hf.space)
 
-<img src="assets/stack.svg" alt="Tech stack: scikit-learn, LangGraph, FastAPI, React, Next.js, MongoDB, Docker, Python, C++ and more" width="100%">
+<br>
 
-<br><br>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/crohns-dark.svg">
+  <img src="assets/crohns-light.svg" alt="Crohn's severity prediction: early-stage research, currently sourcing a dataset" width="100%">
+</picture>
 
-<img src="assets/h_now.svg" alt="04 Now and Next" width="100%">
+## Other projects
 
-<br><br>
+| Project | What it does | Built with |
+| --- | --- | --- |
+| [MDT AI Copilot](https://github.com/HilKalathiya/MDT-AI-Copilot) | Anomaly detection, signal forecasting and a natural-language assistant over 5G measurement data, built on OpenAirInterface. | Python, LangGraph, scikit-learn, Chroma, FastAPI |
+| [Misinformation AI](https://github.com/HilKalathiya/misinformation_ai_hil) | AI-powered tool for combating misinformation. Team project with AI Gyani. | TypeScript, Python |
+| Senso Gown | Patient vitals monitor with a live dashboard and SMS alerts. | ESP8266, sensors, MySQL, Twilio |
 
-<img src="assets/now.svg" alt="Now building HospitalOps AI, exploring agentic systems, looking for ML and AI internships" width="100%">
+## Skills
 
-<br><br>
+| Area | Tools |
+| --- | --- |
+| Machine learning | scikit-learn, pandas, NumPy, ARIMA, Prophet, reinforcement learning |
+| LLM systems | LangGraph, LangChain, RAG, Chroma, Cohere, OpenRouter, Llama 3 |
+| Backend | Python, FastAPI, Node.js, MongoDB, MySQL, SQLite, Redis, Docker |
+| Frontend | React, Next.js, TypeScript, Tailwind CSS, Vite |
+| Fundamentals | Data structures and algorithms, object-oriented design, C++, SQL, Git |
 
-<a href="https://hil-portfolio.vercel.app/"><img src="assets/btn_portfolio.svg" alt="Portfolio" height="56"></a>&nbsp;&nbsp;
-<a href="https://www.linkedin.com/in/hil-kalathiya-47679331b"><img src="assets/btn_linkedin.svg" alt="LinkedIn" height="56"></a>
+## Recognition
 
-<br><br>
-
-<img src="assets/footer.svg" alt="Simplicity scales. Clarity wins. Engineering is responsibility." width="100%">
-
-</div>
+- Smart India Hackathon: Top 25 in 2024 and again in 2025
+- NPTEL Deep Learning, Elite certification
+- ISRO-IIRS certification in AI and ML

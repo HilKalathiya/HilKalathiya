@@ -73,13 +73,42 @@ THEMES = {
     "dark": dict(ink="#e6edf3", body="#b6bec7", mute="#8b949e", rule="#30363d",
                  faint="#21262d", accent="#3bc9db", warn="#ff8a80", band="#3bc9db"),
 }
+PALS = {
+ "rose":   {"light": dict(bg="#fbeff1", accent="#b8234f", faint="#f2d9de", rule="#e3bcc5"), "dark": dict(bg="#271a1f", accent="#ff8fa8", faint="#3a2830", rule="#55383f")},
+ "teal":   {"light": dict(bg="#e6f3f5", accent="#0b7285", faint="#cbe4e8", rule="#a9cfd6"), "dark": dict(bg="#11252a", accent="#3bc9db", faint="#1d3a41", rule="#2c5560")},
+ "indigo": {"light": dict(bg="#ecedfc", accent="#4547c9", faint="#d5d7f6", rule="#b7baee"), "dark": dict(bg="#1a1b36", accent="#a5a9ff", faint="#2a2c52", rule="#40437a")},
+ "amber":  {"light": dict(bg="#fdf1dc", accent="#a65a00", faint="#f3dfb9", rule="#e3c88f"), "dark": dict(bg="#2a2112", accent="#ffc266", faint="#3d3119", rule="#5a4824")},
+ "green":  {"light": dict(bg="#e7f5ea", accent="#247a37", faint="#cde8d3", rule="#a8d3b1"), "dark": dict(bg="#14261a", accent="#6fd58a", faint="#1f3b27", rule="#2e5a3b")},
+ "slate":  {"light": dict(bg="#eceff3", accent="#3d4b5c", faint="#d9dfe6", rule="#bcc5cf"), "dark": dict(bg="#1c2128", accent="#a9b7c8", faint="#2b323b", rule="#404a56")},
+}
+PAD = 28
+from PIL import ImageFont
+_F = {}
+
+
+def tw(t, size, bold=False):
+    k = (size, bold)
+    if k not in _F:
+        _F[k] = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-%s.otf" % ("SemiBold" if bold else "Regular"), 100)
+    return _F[k].getlength(t) * size / 100
+
+
+def PAL(theme, key):
+    c = dict(THEMES[theme]); c.update(PALS[key][theme]); c["band"] = c["accent"]
+    return c
+
+
 SERIF = "'PLora',Lora,Georgia,'Times New Roman',serif"
 SANS = "'PInter',Inter,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif"
 MONO = "'PMono','Latin Modern Mono',ui-monospace,Menlo,Consolas,monospace"
 
 
-def svg(name, theme, w, h, body, used, title):
-    c = THEMES[theme]
+def svg(name, theme, w, h, body, used, title, pal=None, pad=0, rx=20):
+    c = pal or THEMES[theme]
+    if pad:
+        body = (f'<rect width="{w+2*pad}" height="{h+2*pad}" rx="{rx}" fill="{c["bg"]}"/>'
+                f'<g transform="translate({pad},{pad})">{body}</g>')
+        w, h = w + 2 * pad, h + 2 * pad
     doc = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}" role="img" aria-label="{esc(title)}">
 <style>
 {font_face(used)}
@@ -107,9 +136,10 @@ def para(x, y, s, width, size=15, lh=23, cls="body"):
 
 
 def plate_frame(c, w, title, status, desc, built, h, wrap=40, tsize=34):
-    b = f'<rect x="0" y="0" width="{w}" height="2" fill="{c["ink"]}"/>'
-    b += T(0, 64, title, tsize, "serif b", extra='letter-spacing="-0.6"')
-    b += T(0, 92, status, 14, "b acc")
+    b = T(0, 50, title, tsize, "serif b", extra='letter-spacing="-0.6"')
+    pw = tw(status, 13.5, True) + 26
+    b += f'<rect x="0" y="66" width="{pw:.0f}" height="26" rx="13" fill="{c["accent"]}"/>'
+    b += T(13, 84, status, 13.5, "b", extra=f'style="fill:{c["bg"]}"')
     b += para(0, 128, desc, wrap, 15, 23, "body")
     lines = textwrap.wrap(built, 46)
     y0 = h - 24 - (len(lines) - 1) * 19
@@ -119,18 +149,39 @@ def plate_frame(c, w, title, status, desc, built, h, wrap=40, tsize=34):
 
 # ---------------------------------------------------------------- header
 def header(theme):
-    c = THEMES[theme]
-    W, H = 880, 188
-    b = T(0, 66, "Hil Kalathiya", 62, "serif b", extra='letter-spacing="-1.6"')
-    b += T(0, 112, "Machine learning for healthcare and data systems.", 26, "serif body", extra='style="font-weight:400"')
-    b += para(0, 148, "B.Tech in Information and Communication Technology at PDEU, graduating in 2027. "
-              "I work on forecasting, reinforcement learning and agentic systems.", 76, 15, 23, "mute")
-    svg("header", theme, W, H, b, ["lora600", "lora400", "inter400"], "Hil Kalathiya. Machine learning for healthcare and data systems.")
+    W, H = 880 + 2 * PAD, 396
+    bg = "#14202b" if theme == "light" else "#161b22"
+    cols = ["#ff8fa8", "#3bc9db", "#a5a9ff"]
+    X = 48
+    b = f'<rect width="{W}" height="{H}" rx="22" fill="{bg}"/>'
+    # three strands in the project colours
+    for k, col in enumerate(cols):
+        pts = []
+        for i in range(0, 61):
+            t = i / 60
+            x = 540 + t * 360
+            y = 150 + 46 * math.sin(t * 5.2 + k * 1.15) * (0.55 + 0.45 * t) + (k - 1) * 34 - t * 18
+            pts.append((x, y))
+        b += f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts)}" fill="none" stroke="{col}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>'
+        b += f'<circle cx="{pts[-1][0]:.1f}" cy="{pts[-1][1]:.1f}" r="6" fill="{col}"/>'
+    b += T(X, 130, "Hil Kalathiya", 76, "serif b", extra=f'letter-spacing="-2" style="fill:#ffffff"')
+    for i, ln in enumerate(["Machine learning for healthcare", "and data systems."]):
+        b += T(X, 188 + i * 36, ln, 29, "serif", extra='style="font-weight:400;fill:#d6dde5"')
+    b += para(X, 276, "B.Tech in ICT at PDEU, graduating in 2027. I work on forecasting, "
+              "reinforcement learning and agentic systems.", 56, 15, 23, "mute")
+    b = b.replace('class="body mute"', 'class="mute"')
+    pill = "Looking for machine learning internships, 2026–27"
+    pw = tw(pill, 14.5, True) + 40
+    b += f'<rect x="{X}" y="{H-62}" width="{pw:.0f}" height="34" rx="17" fill="#3bc9db"/>'
+    b += T(X + 20, H - 40, pill, 14.5, "b", extra='style="fill:#0b1b22"')
+    svg("header", theme, W, H, b, ["lora600", "lora400", "inter400", "inter600"],
+        "Hil Kalathiya. Machine learning for healthcare and data systems. Looking for machine learning internships, 2026 to 2027.",
+        {**THEMES[theme], "mute": "#9aa7b4", "body": "#9aa7b4"})
 
 
 # ---------------------------------------------------------------- HospitalOps
 def hospital(theme):
-    c = THEMES[theme]
+    c = PAL(theme, "teal")
     W, H = 880, 352
     b = plate_frame(c, W, "HospitalOps AI", "In progress",
                     "Decision support for hospital operations. Live bed and ward capacity, admission and ICU "
@@ -190,12 +241,12 @@ def hospital(theme):
     b += para(410, ty + 36, "Shipped: access control, patients and beds, data ingestion, dashboard, "
               "baseline forecasts, ARIMA and Prophet.", 70, 13, 19, "body")
     b += para(410, ty + 36 + 40, "Next: LSTM forecasting, simulation, optimization, agent orchestration.", 70, 13, 19, "mute")
-    svg("hospitalops", theme, W, H, b, ["lora600", "inter400", "inter600"], "HospitalOps AI: illustrative ICU bed forecast and build progress, 9 of 13 steps shipped")
+    svg("hospitalops", theme, W, H, b, ["lora600", "inter400", "inter600"], "HospitalOps AI: illustrative ICU bed forecast and build progress, 9 of 13 steps shipped", c, PAD)
 
 
 # ---------------------------------------------------------------- OpenEnv
 def openenv(theme):
-    c = THEMES[theme]
+    c = PAL(theme, "indigo")
     W, H = 880, 322
     b = plate_frame(c, W, "OpenEnv", "Live demo on Hugging Face",
                     "A reinforcement-learning environment where an LLM agent learns to clean tabular data "
@@ -222,39 +273,162 @@ def openenv(theme):
     b += T(L, 218, "Total reward 1.8 in three steps, with no rows lost.", 15, "b")
     b += para(L, 252, "The environment also penalises an unnecessary operation (−0.3) and a repeated action (−1.0), "
               "which is what stops reward-neutral loops.", 70, 13, 19, "body")
-    svg("openenv", theme, W, H, b, ["lora600", "inter400", "inter600", "lm"], "OpenEnv: one example episode, reward 1.8 in three steps")
+    svg("openenv", theme, W, H, b, ["lora600", "inter400", "inter600", "lm"], "OpenEnv: one example episode, reward 1.8 in three steps", c, PAD)
 
 
-# ---------------------------------------------------------------- Crohn's
-def crohns(theme):
-    c = THEMES[theme]
-    W, H = 880, 292
-    b = plate_frame(c, W, "Crohn's severity prediction", "Research, early stage",
-                    "Machine learning to predict early how severe a patient's Crohn's disease will be. "
-                    "The work starts with the data: finding a dataset that suits severity prediction "
-                    "before choosing models.",
-                    "Academic project at PDEU.", H, 40, 30)
+# ---------------------------------------------------------------- CrohnSight
+def crohnsight(theme):
+    c = PAL(theme, "rose")
+    W, H = 880, 452
+    b = plate_frame(c, W, "CrohnSight", "Complete",
+                    "Reads small-bowel capsule-endoscopy frames and videos. It finds Crohn's lesions, grades their "
+                    "severity and shows where on the frame the model is looking. It runs as an offline web app on a "
+                    "CPU. A research prototype, not a medical device.",
+                    "Built with PyTorch, ONNX, FastAPI and Next.js, together with Sahaj Saliya. Guided by Prof. Dr. Babalu Kumar Singh at PDEU.",
+                    H, 40)
     L, R = 410, 880
-    b += T(L, 34, "Where the project stands", 14, "b")
-    steps = [("Dataset", True), ("Preparation", False), ("Modelling", False), ("Evaluation", False)]
-    xs = [L + 8, L + 8 + 152, L + 8 + 304, R - 8]
-    y = 92
-    b += f'<line x1="{xs[0]}" y1="{y}" x2="{xs[1]}" y2="{y}" stroke="{c["accent"]}" stroke-width="2"/>'
-    b += f'<line x1="{xs[1]}" y1="{y}" x2="{xs[-1]}" y2="{y}" stroke="{c["rule"]}" stroke-width="2" stroke-dasharray="4 4"/>'
-    for i, ((lab, now), x) in enumerate(zip(steps, xs)):
-        if now:
-            b += f'<circle cx="{x}" cy="{y}" r="9" fill="{c["accent"]}" fill-opacity="0.18"/><circle cx="{x}" cy="{y}" r="5.5" fill="{c["accent"]}"/>'
-        else:
-            b += f'<circle cx="{x}" cy="{y}" r="5.5" fill="none" stroke="{c["rule"]}" stroke-width="2"/>'
-        an = "start" if i == 0 else ("end" if i == 3 else "middle")
-        lx = L if i == 0 else (R if i == 3 else x)
-        b += T(lx, y + 34, lab, 14, "b" if now else "mute", an)
-    b += T(L, y + 56, "Current step", 12.5, "b acc")
-    b += para(L, 188, "The aim is early prediction, so the first job is a dataset with outcomes to learn from. "
-              "Model choices come after that.", 70, 13.5, 20, "body")
-    svg("crohns", theme, W, H, b, ["lora600", "inter400", "inter600"], "Crohn's severity prediction: project is at the dataset stage")
+    b += T(L, 34, "Lesion detection, AUROC", 14, "b")
+    b += T(R, 34, "Interval shown where reported", 12.5, "mute", "end")
+    PX0, PX1 = 646, 826
+    gy0, gy1 = 62, 226
 
+    def pxv(v):
+        return PX0 + (v - 0.5) / 0.5 * (PX1 - PX0)
+
+    for v, lab in ((0.5, "0.5"), (0.75, "0.75"), (1.0, "1.0")):
+        b += f'<line x1="{pxv(v):.1f}" y1="{gy0}" x2="{pxv(v):.1f}" y2="{gy1}" stroke="{c["faint"] if v != 0.5 else c["rule"]}" stroke-width="1"/>'
+        b += T(pxv(v), gy1 + 20, lab, 11.5, "mute", "middle")
+    b += T(L, gy1 + 20, "Chance is 0.5, perfect is 1.0", 12, "mute")
+    rows = [("CrohnIPI, cross-validated", 0.992, (0.989, 0.995), True),
+            ("Kvasir-Capsule, external", 0.944, (0.86, 0.98), False),
+            ("SEE-AI erosion, external", 0.897, None, False),
+            ("SEE-AI stenosis, external", 0.916, None, False),
+            ("SEE-AI erythema, external", 0.897, None, False)]
+    for i, (lab, v, ci, internal) in enumerate(rows):
+        y = 88 + i * 32
+        b += T(L, y + 4.5, lab, 13.5, "b" if internal else "body")
+        col = c["accent"] if internal else c["ink"]
+        if ci:
+            x0, x1 = pxv(ci[0]), pxv(ci[1])
+            b += f'<line x1="{x0:.1f}" y1="{y}" x2="{x1:.1f}" y2="{y}" stroke="{col}" stroke-width="2"/>'
+            b += f'<line x1="{x0:.1f}" y1="{y-4}" x2="{x0:.1f}" y2="{y+4}" stroke="{col}" stroke-width="2"/><line x1="{x1:.1f}" y1="{y-4}" x2="{x1:.1f}" y2="{y+4}" stroke="{col}" stroke-width="2"/>'
+        if internal:
+            b += f'<circle cx="{pxv(v):.1f}" cy="{y}" r="5.5" fill="{col}"/>'
+        else:
+            b += f'<circle cx="{pxv(v):.1f}" cy="{y}" r="5" fill="none" stroke="{col}" stroke-width="2"/>'
+        b += T(R, y + 4.5, f"{v:.3f}", 14, "b", "end")
+    b += f'<line x1="{L}" y1="272" x2="{R}" y2="272" stroke="{c["rule"]}" stroke-width="1"/>'
+    stats = [("96.7%", "Lesion versus normal accuracy. Best published: 94.6%."),
+             ("0.94", "Severity grading across four tiers, quadratic weighted kappa."),
+             ("10", "EfficientNet-B2 models in the ensemble, running on a CPU.")]
+    for i, (big, lab) in enumerate(stats):
+        x = L + i * 152
+        b += T(x, 318, big, 34, "serif b acc", extra='letter-spacing="-0.8"')
+        b += para(x, 342, lab, 22, 12.5, 17, "body")
+    b += T(L, 408, "Known limits", 13, "b")
+    b += para(L, 428, "Whole-video lesion detection is near chance (AUROC 0.57), and the flare-risk model only matches its baseline.", 66, 13, 19, "body")
+    svg("crohnsight", theme, W, H, b, ["lora600", "inter400", "inter600"],
+        "CrohnSight: Crohn's lesion detection from capsule endoscopy, AUROC 0.992 internal and 0.944 on an external dataset", c, PAD)
+
+
+# ---------------------------------------------------------------- section heading
+def heading(name, theme, title, note):
+    c = THEMES[theme]
+    W, H = 880 + 2 * PAD, 76
+    b = f'<rect x="0" y="12" width="40" height="5" rx="2.5" fill="{c["ink"]}"/>'
+    b += T(0, 58, title, 34, "serif b", extra='letter-spacing="-0.8"')
+    b += T(W, 58, note, 14, "mute", "end")
+    svg(name, theme, W, H, b, ["lora600", "inter400"], title)
+
+
+# ---------------------------------------------------------------- compact project card
+def card(name, theme, key, title, desc, stack):
+    c = PAL(theme, key)
+    W, H = 272, 262
+    b = f'<rect x="0" y="0" width="44" height="6" rx="3" fill="{c["accent"]}"/>'
+    b += T(0, 56, title, 25, "serif b", extra='letter-spacing="-0.4"')
+    b += para(0, 92, desc, 29, 15.5, 23, "body")
+    x, y = 0, H - 40
+    chips = []
+    for t in [t.strip() for t in stack.split(",")]:
+        chips.append((t, tw(t, 12.5) + 22))
+    rows, cur, cw = [], [], 0
+    for t, w in chips:
+        if cw + w > W and cur:
+            rows.append(cur); cur, cw = [], 0
+        cur.append((t, w)); cw += w + 6
+    rows.append(cur)
+    y0 = H - 4 - len(rows) * 31
+    for r, row in enumerate(rows):
+        x = 0
+        for t, w in row:
+            yy = y0 + r * 31
+            b += f'<rect x="{x:.0f}" y="{yy}" width="{w:.0f}" height="25" rx="12.5" fill="{c["faint"]}"/>'
+            b += T(x + 11, yy + 17, t, 12.5, "", extra=f'style="fill:{c["ink"]}"')
+            x += w + 6
+    svg(name, theme, W, H, b, ["lora600", "inter400"], f"{title}. {desc} Built with {stack}.", c, 22, 18)
+
+
+# ---------------------------------------------------------------- skills as chips
+def skills(theme):
+    c = PAL(theme, "slate")
+    W = 880
+    y = 6
+    b = ""
+    for gi, (label, items) in enumerate(SKILLS):
+        if gi:
+            b += f'<rect x="0" y="{y-14}" width="{W}" height="1" fill="{c["rule"]}"/>'
+        b += T(0, y + 22, label, 20, "serif b", extra='letter-spacing="-0.2"')
+        x, row = 220, 0
+        for t in items:
+            w = tw(t, 13.5) + 26
+            if x + w > W:
+                x, row = 220, row + 1
+            yy = y + row * 38
+            b += f'<rect x="{x:.0f}" y="{yy}" width="{w:.0f}" height="30" rx="15" fill="{c["faint"]}"/>'
+            b += T(x + 12, yy + 20, t, 13.5, "", extra=f'style="fill:{c["ink"]}"')
+            x += w + 8
+        y += (row + 1) * 38 + 22
+    H = y - 10
+    svg("skills", theme, W, H, b, ["lora600", "inter400"],
+        "Skills. " + " ".join(f"{a}: {', '.join(i)}." for a, i in SKILLS), c, PAD)
+
+
+# ---------------------------------------------------------------- recognition tiles
+def recognition(theme):
+    W, H = 880 + 2 * PAD, 190
+    g = 18
+    tw = (880 + 2 * PAD - 2 * g) / 3
+    b = ""
+    for i, (key, big, org, sub) in enumerate(RECOG):
+        c = PAL(theme, key)
+        x = i * (tw + g)
+        b += f'<rect x="{x:.1f}" y="0" width="{tw:.1f}" height="{H}" rx="20" fill="{c["bg"]}"/>'
+        b += f'<rect x="{x+28:.1f}" y="28" width="44" height="6" rx="3" fill="{c["accent"]}"/>'
+        b += T(x + 28, 98, big, 46, "serif b acc", extra=f'letter-spacing="-1" style="fill:{c["accent"]}"')
+        b += T(x + 28, 138, org, 16, "b", extra=f'style="fill:{c["ink"]}"')
+        b += T(x + 28, 160, sub, 13.5, "", extra=f'style="fill:{c["body"]}"')
+    svg("recognition", theme, int(W), H, b, ["lora600", "inter400", "inter600"],
+        "Recognition. " + " ".join(f"{o}: {bg}, {s}" for _, bg, o, s in RECOG))
+
+
+SKILLS = [("Machine learning", ["scikit-learn", "pandas", "NumPy", "PyTorch", "ARIMA", "Prophet", "Reinforcement learning"]),
+          ("LLM systems", ["LangGraph", "LangChain", "RAG", "Chroma", "Cohere", "OpenRouter", "Llama 3"]),
+          ("Backend", ["Python", "FastAPI", "Node.js", "MongoDB", "MySQL", "SQLite", "Redis", "Docker"]),
+          ("Frontend", ["React", "Next.js", "TypeScript", "Tailwind CSS", "Vite"]),
+          ("Fundamentals", ["Data structures and algorithms", "Object-oriented design", "C++", "SQL", "Git"])]
+RECOG = [("amber", "Top 25", "Smart India Hackathon", "2024, and again in 2025"),
+         ("indigo", "Elite", "NPTEL", "Deep Learning certification"),
+         ("green", "Certified", "ISRO-IIRS", "Artificial intelligence and ML")]
 
 for th in THEMES:
-    header(th); hospital(th); openenv(th); crohns(th)
-print(sorted(os.listdir(OUT)), [round(os.path.getsize(os.path.join(OUT, f)) / 1024) for f in sorted(os.listdir(OUT))])
+    header(th); crohnsight(th); hospital(th); openenv(th)
+    heading("h-selected", th, "Selected work", "Three projects I'm proudest of")
+    heading("h-also", th, "Also built", "Smaller and earlier work")
+    heading("h-skills", th, "Skills", "What I build with")
+    heading("h-recog", th, "Recognition", "Competitions and certifications")
+    card("card-mdt", th, "amber", "MDT AI Copilot", "Anomaly detection, forecasting and a natural-language assistant over 5G measurement data.", "Python, LangGraph, scikit-learn, Chroma, FastAPI")
+    card("card-misinfo", th, "green", "Misinformation AI", "A tool for combating misinformation, built with team AI Gyani.", "TypeScript, Python")
+    card("card-senso", th, "slate", "Senso Gown", "A patient vitals monitor with a live dashboard and SMS alerts.", "ESP8266, MySQL, Twilio")
+    skills(th); recognition(th)
+print(len(os.listdir(OUT)))

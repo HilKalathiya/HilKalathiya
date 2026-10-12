@@ -1,13 +1,21 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg">
-  <img src="assets/header-light.svg" alt="Hil Kalathiya. Machine learning for healthcare and data systems." width="100%">
+  <img src="assets/header-light.svg" alt="Hil Kalathiya. Machine learning for healthcare and data systems. Looking for machine learning internships, 2026 to 2027." width="100%">
 </picture>
 
 [Portfolio](https://hil-portfolio.vercel.app/) &nbsp;|&nbsp; [LinkedIn](https://www.linkedin.com/in/hil-kalathiya-47679331b)
 
-I'm looking for machine learning internships for 2026–27.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/h-selected-dark.svg">
+  <img src="assets/h-selected-light.svg" alt="Selected work" width="100%">
+</picture>
 
-## Selected work
+<a href="https://github.com/HilKalathiya/Crohn-Disease-Early-Prediction">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/crohnsight-dark.svg">
+  <img src="assets/crohnsight-light.svg" alt="CrohnSight: Crohn's lesion detection and severity grading from capsule endoscopy. AUROC 0.992 internal, 0.944 on an external dataset, severity kappa 0.94." width="100%">
+</picture>
+</a>
 
 <a href="https://github.com/HilKalathiya/HospitalOps-AI">
 <picture>
@@ -15,8 +23,6 @@ I'm looking for machine learning internships for 2026–27.
   <img src="assets/hospitalops-light.svg" alt="HospitalOps AI: decision support for hospital operations, 9 of 13 build steps shipped" width="100%">
 </picture>
 </a>
-
-<br>
 
 <a href="https://github.com/HilKalathiya/open-env-nuclei">
 <picture>
@@ -27,33 +33,44 @@ I'm looking for machine learning internships for 2026–27.
 
 [Try the OpenEnv live demo](https://chetangadhiya017-data-cleaning-env.hf.space)
 
-<br>
-
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/crohns-dark.svg">
-  <img src="assets/crohns-light.svg" alt="Crohn's severity prediction: early-stage research, currently sourcing a dataset" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/h-also-dark.svg">
+  <img src="assets/h-also-light.svg" alt="Also built" width="100%">
 </picture>
 
-## Other projects
+<a href="https://github.com/HilKalathiya/MDT-AI-Copilot">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/card-mdt-dark.svg">
+  <img src="assets/card-mdt-light.svg" alt="MDT AI Copilot: anomaly detection, forecasting and a natural-language assistant over 5G measurement data. Python, LangGraph, scikit-learn, Chroma, FastAPI." width="32%">
+</picture>
+</a>
+<a href="https://github.com/HilKalathiya/misinformation_ai_hil">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/card-misinfo-dark.svg">
+  <img src="assets/card-misinfo-light.svg" alt="Misinformation AI: a tool for combating misinformation, built with team AI Gyani. TypeScript, Python." width="32%">
+</picture>
+</a>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/card-senso-dark.svg">
+  <img src="assets/card-senso-light.svg" alt="Senso Gown: a patient vitals monitor with a live dashboard and SMS alerts. ESP8266, MySQL, Twilio." width="32%">
+</picture>
 
-| Project | What it does | Built with |
-| --- | --- | --- |
-| [MDT AI Copilot](https://github.com/HilKalathiya/MDT-AI-Copilot) | Anomaly detection, signal forecasting and a natural-language assistant over 5G measurement data, built on OpenAirInterface. | Python, LangGraph, scikit-learn, Chroma, FastAPI |
-| [Misinformation AI](https://github.com/HilKalathiya/misinformation_ai_hil) | AI-powered tool for combating misinformation. Team project with AI Gyani. | TypeScript, Python |
-| Senso Gown | Patient vitals monitor with a live dashboard and SMS alerts. | ESP8266, sensors, MySQL, Twilio |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/h-skills-dark.svg">
+  <img src="assets/h-skills-light.svg" alt="Skills" width="100%">
+</picture>
 
-## Skills
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/skills-dark.svg">
+  <img src="assets/skills-light.svg" alt="Machine learning: scikit-learn, pandas, NumPy, PyTorch, ARIMA, Prophet, reinforcement learning. LLM systems: LangGraph, LangChain, RAG, Chroma, Cohere, OpenRouter, Llama 3. Backend: Python, FastAPI, Node.js, MongoDB, MySQL, SQLite, Redis, Docker. Frontend: React, Next.js, TypeScript, Tailwind CSS, Vite. Fundamentals: data structures and algorithms, object-oriented design, C++, SQL, Git." width="100%">
+</picture>
 
-| Area | Tools |
-| --- | --- |
-| Machine learning | scikit-learn, pandas, NumPy, ARIMA, Prophet, reinforcement learning |
-| LLM systems | LangGraph, LangChain, RAG, Chroma, Cohere, OpenRouter, Llama 3 |
-| Backend | Python, FastAPI, Node.js, MongoDB, MySQL, SQLite, Redis, Docker |
-| Frontend | React, Next.js, TypeScript, Tailwind CSS, Vite |
-| Fundamentals | Data structures and algorithms, object-oriented design, C++, SQL, Git |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/h-recog-dark.svg">
+  <img src="assets/h-recog-light.svg" alt="Recognition" width="100%">
+</picture>
 
-## Recognition
-
-- Smart India Hackathon: Top 25 in 2024 and again in 2025
-- NPTEL Deep Learning, Elite certification
-- ISRO-IIRS certification in AI and ML
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/recognition-dark.svg">
+  <img src="assets/recognition-light.svg" alt="Smart India Hackathon: Top 25 in 2024 and again in 2025. NPTEL: Deep Learning, Elite certification. ISRO-IIRS: certification in AI and ML." width="100%">
+</picture>

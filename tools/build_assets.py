@@ -180,14 +180,18 @@ def header(theme):
 
 
 # ---------------------------------------------------------------- HospitalOps
+# build steps from the HospitalOps-AI README status table
+STEPS, DONE = 19, 17
+
+
 def hospital(theme):
     c = PAL(theme, "teal")
-    W, H = 880, 352
+    W, H = 880, 372
     b = plate_frame(c, W, "HospitalOps AI", "In progress",
-                    "Decision support for hospital operations. Live bed and ward capacity, admission and ICU "
-                    "demand forecasts and, next, what-if simulation and resource optimization. It supports "
-                    "operations staff and makes no clinical decisions.",
-                    "Built with FastAPI, React, TypeScript, MongoDB, Redis and Docker.", H, 40)
+                    "Decision support for hospital operations: live bed and ward capacity, admission and ICU "
+                    "demand forecasts, what-if simulation, and a MILP optimizer that plans surge beds and "
+                    "equipment. It advises operations staff and makes no clinical decisions.",
+                    "Built with FastAPI, React, TypeScript, MongoDB, Redis, MLflow and Docker.", H, 40)
     X0, X1 = 446, 880
     Y0, Y1 = 66, 206
     b += T(410, 34, "ICU beds in use", 14, "b")
@@ -230,50 +234,68 @@ def hospital(theme):
     # build progress
     ty = 262
     b += T(410, ty - 8, "Build progress", 14, "b")
-    b += T(X1, ty - 8, "9 of 13 steps shipped", 12.5, "mute", "end")
-    sw, gap = 28, 5.4
-    for i in range(13):
+    b += T(X1, ty - 8, f"{DONE} of {STEPS} steps shipped", 12.5, "mute", "end")
+    gap = 4.4
+    sw = (X1 - 410 - (STEPS - 1) * gap) / STEPS
+    for i in range(STEPS):
         x = 410 + i * (sw + gap)
-        if i < 9:
-            b += f'<rect x="{x:.1f}" y="{ty}" width="{sw}" height="10" rx="2" fill="{c["accent"]}"/>'
+        if i < DONE:
+            b += f'<rect x="{x:.1f}" y="{ty}" width="{sw:.1f}" height="10" rx="2" fill="{c["accent"]}"/>'
         else:
-            b += f'<rect x="{x+0.75:.1f}" y="{ty+0.75}" width="{sw-1.5}" height="8.5" rx="2" fill="none" stroke="{c["rule"]}" stroke-width="1.5"/>'
-    b += para(410, ty + 36, "Shipped: access control, patients and beds, data ingestion, dashboard, "
-              "baseline forecasts, ARIMA and Prophet.", 70, 13, 19, "body")
-    b += para(410, ty + 36 + 40, "Next: LSTM forecasting, simulation, optimization, agent orchestration.", 70, 13, 19, "mute")
-    svg("hospitalops", theme, W, H, b, ["lora600", "inter400", "inter600"], "HospitalOps AI: illustrative ICU bed forecast and build progress, 9 of 13 steps shipped", c, PAD)
+            b += f'<rect x="{x+0.75:.1f}" y="{ty+0.75}" width="{sw-1.5:.1f}" height="8.5" rx="2" fill="none" stroke="{c["rule"]}" stroke-width="1.5"/>'
+    shipped = ("Shipped: access control, beds and admissions, data ingestion, ARIMA, Prophet and LSTM "
+               "forecasts, MLflow tracking, what-if simulation and the MILP optimizer.")
+    b += para(410, ty + 36, shipped, 70, 13, 19, "body")
+    b += para(410, ty + 42 + 19 * len(textwrap.wrap(shipped, 70)), "Next: a review screen for optimizer plans, then agent orchestration with RAG.", 70, 13, 19, "mute")
+    svg("hospitalops", theme, W, H, b, ["lora600", "inter400", "inter600"], f"HospitalOps AI: illustrative ICU bed forecast and build progress, {DONE} of {STEPS} steps shipped", c, PAD)
 
 
 # ---------------------------------------------------------------- OpenEnv
 def openenv(theme):
     c = PAL(theme, "indigo")
-    W, H = 880, 322
+    W, H = 880, 340
     b = plate_frame(c, W, "OpenEnv", "Live demo on Hugging Face",
-                    "A reinforcement-learning environment where an LLM agent learns to clean tabular data "
-                    "from reward instead of fixed rules. A penalty on repeated actions stops it from looping.",
-                    "Built with Llama 3, FastAPI, Docker and Hugging Face Spaces, together with Chetan Gadhiya and Sahaj Saliya.", H, 40)
+                    "An environment where an agent cleans a dirty table one action at a time and is graded "
+                    "against a hidden clean copy. A PPO agent trained in it matches a hand-written expert, "
+                    "and a zero-shot LLM trails on the hardest task.",
+                    "Built with OpenEnv, FastAPI, pandas, Stable-Baselines3 and Hugging Face Spaces, together with Chetan Gadhiya and Sahaj Saliya.", H, 40)
     L, R = 410, 880
-    b += T(L, 34, "One episode", 14, "b")
-    b += T(R, 34, "Example run from the project README", 12.5, "mute", "end")
-    cols = [(L, "Step", "start"), (456, "What the agent sees", "start"), (656, "Action", "start"), (R, "Reward", "end")]
-    for x, lab, an in cols:
-        b += T(x, 70, lab, 12.5, "mute", an)
-    rows = [("1", "12 missing, 3 duplicates", "fill_missing", "+1.0"),
-            ("2", "0 missing, 3 duplicates", "remove_duplicates", "+0.8"),
-            ("3", "0 missing, 0 duplicates", "terminate", "0.0")]
-    y = 78
-    b += f'<line x1="{L}" y1="{y}" x2="{R}" y2="{y}" stroke="{c["ink"]}" stroke-width="1"/>'
-    for i, (s, o, a, r) in enumerate(rows):
-        base = y + 30 + i * 38
-        b += T(L, base, s, 14, "b")
-        b += T(456, base, o, 14, "body")
-        b += T(656, base, a, 13.5, "mono")
-        b += T(R, base, r, 15, "b acc" if r != "0.0" else "b mute", "end")
-        b += f'<line x1="{L}" y1="{base+13}" x2="{R}" y2="{base+13}" stroke="{c["rule"]}" stroke-width="1"/>'
-    b += T(L, 218, "Total reward 1.8 in three steps, with no rows lost.", 15, "b")
-    b += para(L, 252, "The environment also penalises an unnecessary operation (−0.3) and a repeated action (−1.0), "
-              "which is what stops reward-neutral loops.", 70, 13, 19, "body")
-    svg("openenv", theme, W, H, b, ["lora600", "inter400", "inter600", "lm"], "OpenEnv: one example episode, reward 1.8 in three steps", c, PAD)
+    b += T(L, 34, "Final grader score, hardest task", 14, "b")
+    b += T(R, 34, "Mean ± std over held-out seeds", 12.5, "mute", "end")
+    PX0, PX1 = 640, 826
+    gy0, gy1 = 56, 222
+
+    def pxv(v):
+        return PX0 + (v - 0.5) / 0.5 * (PX1 - PX0)
+
+    for v, lab in ((0.5, "0.5"), (0.75, "0.75"), (1.0, "1.0")):
+        b += f'<line x1="{pxv(v):.1f}" y1="{gy0}" x2="{pxv(v):.1f}" y2="{gy1}" stroke="{c["faint"] if v != 0.5 else c["rule"]}" stroke-width="1"/>'
+        b += T(pxv(v), gy1 + 20, lab, 11.5, "mute", "middle")
+    b += T(L, gy1 + 20, "1.0 is a perfect restore", 12, "mute")
+    # hard-clean column of the README benchmark table (LLM: 5 seeds, others: 10)
+    rows = [("PPO agent, trained", 0.967, 0.004, True),
+            ("Rule-based expert", 0.968, 0.003, False),
+            ("Llama 3.1 8B, zero-shot", 0.838, 0.037, False),
+            ("Do nothing", 0.608, 0.0, False),
+            ("Random actions", 0.534, 0.058, False)]
+    for i, (lab, v, sd, ours) in enumerate(rows):
+        y = 80 + i * 32
+        b += T(L, y + 4.5, lab, 13.5, "b" if ours else "body")
+        col = c["accent"] if ours else c["ink"]
+        if sd:
+            x0, x1 = pxv(v - sd), pxv(v + sd)
+            b += f'<line x1="{x0:.1f}" y1="{y}" x2="{x1:.1f}" y2="{y}" stroke="{col}" stroke-width="2"/>'
+        if ours:
+            b += f'<circle cx="{pxv(v):.1f}" cy="{y}" r="5.5" fill="{col}"/>'
+        else:
+            b += f'<circle cx="{pxv(v):.1f}" cy="{y}" r="5" fill="{c["bg"]}" stroke="{col}" stroke-width="2"/>'
+        b += T(R, y + 4.5, f"{v:.3f}", 14, "b", "end")
+    b += f'<line x1="{L}" y1="266" x2="{R}" y2="266" stroke="{c["rule"]}" stroke-width="1"/>'
+    b += para(L, 292, "The trained policy never issues an invalid action. Reward and final score are kept separate, "
+              "so going in circles earns nothing.", 70, 13, 19, "body")
+    svg("openenv", theme, W, H, b, ["lora600", "inter400", "inter600"],
+        "OpenEnv: on the hardest data-cleaning task a trained PPO agent scores 0.967, level with a rule-based expert at 0.968, "
+        "ahead of a zero-shot Llama 3.1 8B at 0.838", c, PAD)
 
 
 # ---------------------------------------------------------------- CrohnSight

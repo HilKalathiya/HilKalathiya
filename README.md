@@ -3,7 +3,7 @@
   <img src="assets/header-light.svg" alt="Hil Kalathiya. Machine learning for healthcare and data systems. Looking for machine learning internships, 2026 to 2027." width="100%">
 </picture>
 
-[hilkalathiya@gmail.com](mailto:hilkalathiya@gmail.com) &nbsp;·&nbsp; [Portfolio](https://hil-portfolio.vercel.app/) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/hil-kalathiya-47679331b)
+[hilkalathiya@gmail.com](mailto:hilkalathiya@gmail.com) &nbsp;·&nbsp; [Portfolio](https://hilkalathiya.github.io/Potfolio/) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/hil-kalathiya-47679331b)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/h-selected-dark.svg">

@@ -1,0 +1,215 @@
+# What the profile shows, and where each value comes from.
+#
+# The profile rebuilds itself every hour (.github/workflows/refresh.yml).
+# Values written as plain text stay as written. Values written as a "$" binding
+# are read fresh from the project's repository on every build, so when you
+# change the project, the profile follows:
+#
+#   {$git: updated}                      date of the latest commit, e.g. "21 Nov 2026"
+#   {$git: commits}                      number of commits
+#   {$match: 'regex', file: README.md}   first regex group found in that file
+#   {$count: 'regex', file: README.md}   how many lines match
+#   {$count: 'regex', glob: 'tests/test_*.py'}   matches across many files
+#   {$cell: 'row label regex', col: 3, file: README.md, pick: 0}
+#                                        nth number inside a Markdown table cell
+#
+# Each binding may carry `fallback:` (used, with a warning, if the text is no
+# longer found) and `format: "{:,}"` for numbers.
+#
+# A project can also own its panel: put a `.github/showcase.yml` in that
+# repository with any of the keys below, and it overrides what is written here.
+#
+# To add a project: add an entry under `projects`, push, and the profile
+# picks it up on the next run (or run the workflow by hand from the Actions tab).
+
+owner: HilKalathiya
+name: Hil Kalathiya
+tagline: [Machine learning for healthcare, and data systems.]
+intro: >-
+  B.Tech in ICT at PDEU, graduating in 2027. I build AI systems that have to
+  be right, from drug-approval dossiers to medical imaging.
+pill: Looking for machine learning internships, 2026–27
+links:
+  - [hilkalathiya@gmail.com, "mailto:hilkalathiya@gmail.com"]
+  - [Portfolio, "https://hilkalathiya.github.io/Potfolio/"]
+  - [LinkedIn, "https://www.linkedin.com/in/hil-kalathiya-47679331b"]
+
+sections:
+  selected: [Selected work, Projects I'm proudest of]
+  also: [Also built, Smaller and earlier work]
+  skills: [Skills, What I build with]
+  recognition: [Recognition, Competitions and certifications]
+
+projects:
+
+  # ------------------------------------------------------------------ lead
+  - repo: eCTD-Compilation-Audit-Platform
+    layout: lead
+    kicker: Lead project · AI for drug regulation
+    title: eCTD Compilation & Audit Platform
+    status: In active development
+    desc: >-
+      Drafts and audits the dossier a drug company files with regulators such as the
+      FDA. A language model writes the words, but never a number: every value comes
+      from a verified fact store, every claim is re-checked by code, and a person
+      signs off before anything is filed.
+    pipeline:
+      - [Extract, "Pull values from lab data and PDFs", model]
+      - [Validate, "Unit, range and two-source check", code]
+      - [Store, "One fact store with source pointers", code]
+      - [Compute, "Tested functions, Decimal rounding", code]
+      - [Write, "Prose with placeholders only", model]
+      - [Check, "Every digit and claim re-tested", code]
+      - [Sign, "Reviewer clicks a number, sees its source", person]
+    pipeline_note: >-
+      Only the two model steps are probabilistic, and code checks both before
+      anything moves on. Every check ships with a planted-error test that proves it can fail.
+    stats:
+      - value: {$match: 'numbers (\d+) == placements', file: STATE.md, format: "{:,}", fallback: "3,589"}
+        label: numbers in the generated Word section, each traced to its source fact
+      - value: {$match: 'unrecognised (\d+), flags (?:\d+)', file: STATE.md, fallback: "0"}
+        label: sentences the latest audit could not back with a fact
+      - value: {$count: '^\s*def test_', glob: 'tests/test_*.py', format: "{:,}", fallback: "643"}
+        label: automated tests, counted from the repository on every build
+      - value: {$match: '## \S+ — T-0*(\d+) done', file: STATE.md, fallback: "59"}
+        label: build tasks shipped, each with its own evidence folder
+    built: Built with Python, PostgreSQL, Neo4j, a local Gemma model on Ollama, PyMuPDF, python-docx and Docker.
+    links:
+      - [Read the technical brief, "https://github.com/HilKalathiya/eCTD-Compilation-Audit-Platform/blob/main/AI%20Evidence%20Engine%20for%20Drug%20Approval%20Dossiers%20%E2%80%94%20Technical%20Brief.md"]
+
+  # ------------------------------------------------------------------ features
+  - repo: Crohn-Disease-Early-Prediction
+    layout: feature
+    colour: rose
+    title: CrohnSight
+    status: Complete
+    desc: >-
+      Reads small-bowel capsule-endoscopy frames and videos. It finds Crohn's lesions,
+      grades their severity and shows where on the frame the model is looking. It runs
+      as an offline web app on a CPU. A research prototype, not a medical device.
+    built: Built with PyTorch, ONNX, FastAPI and Next.js, together with Sahaj Saliya. Guided by Prof. Dr. Babalu Kumar Singh at PDEU.
+    blocks:
+      - kind: dots
+        title: Lesion detection, AUROC
+        note: Interval shown where reported
+        axis: "Chance is 0.5, perfect is 1.0"
+        rows:
+          - label: CrohnIPI, cross-validated
+            value: {$match: 'Lesion vs normal AUROC \| \*\*([\d.]+)\*\*', file: README.md, fallback: "0.992"}
+            ci: [{$match: 'AUROC \| \*\*[\d.]+\*\* \(95% CI ([\d.]+)', file: README.md, fallback: "0.989"},
+                 {$match: 'AUROC \| \*\*[\d.]+\*\* \(95% CI [\d.]+–([\d.]+)', file: README.md, fallback: "0.995"}]
+            ours: true
+          - label: Kvasir-Capsule, external
+            value: {$match: 'Inflammatory vs normal AUROC \*\*([\d.]+)\*\*', file: README.md, fallback: "0.944"}
+            ci: [{$match: 'Inflammatory vs normal AUROC \*\*[\d.]+\*\* \(CI ([\d.]+)', file: README.md, fallback: "0.86"},
+                 {$match: 'Inflammatory vs normal AUROC \*\*[\d.]+\*\* \(CI [\d.]+–([\d.]+)', file: README.md, fallback: "0.98"}]
+          - label: SEE-AI erosion, external
+            value: {$match: 'SEE-AI \(Japan\) \| Erosion \*\*([\d.]+)\*\*', file: README.md, fallback: "0.897"}
+          - label: SEE-AI stenosis, external
+            value: {$match: 'SEE-AI \(Japan\) \|.*stenosis \*\*([\d.]+)\*\*', file: README.md, fallback: "0.916"}
+          - label: SEE-AI erythema, external
+            value: {$match: 'SEE-AI \(Japan\) \|.*erythema \*\*([\d.]+)\*\*', file: README.md, fallback: "0.897"}
+      - kind: stats
+        items:
+          - value: {$match: 'accuracy \(cross-fitted threshold\) \| \*\*([\d.]+%)\*\*', file: README.md, fallback: "96.7%"}
+            label: ["Lesion versus normal accuracy. Best published: ", {$match: '\| ([\d.]+%) \(ResNet-34\)', file: README.md, fallback: "94.6%"}, "."]
+          - value: {$match: 'quadratic weighted kappa \| \*\*([\d.]+)\*\*', file: README.md, fallback: "0.94"}
+            label: Severity grading across four tiers, quadratic weighted kappa.
+          - value: {$match: '\*\*(\d+) × EfficientNet-B2\*\*', file: README.md, fallback: "10"}
+            label: EfficientNet-B2 models in the ensemble, running on a CPU.
+      - kind: note
+        title: Known limits
+        text: ["Whole-video lesion detection is near chance (AUROC ",
+               {$match: 'study-level AUROC ([\d.]+)', file: README.md, fallback: "0.57"},
+               "), and the flare-risk model only matches its baseline."]
+
+  - repo: HospitalOps-AI
+    layout: feature
+    colour: teal
+    title: HospitalOps AI
+    status: In progress
+    desc: >-
+      Decision support for hospital operations: live bed and ward capacity, admission and
+      ICU demand forecasts, what-if simulation, and a MILP optimizer that plans surge beds
+      and equipment. It advises operations staff and makes no clinical decisions.
+    built: Built with FastAPI, React, TypeScript, MongoDB, Redis, MLflow and Docker.
+    blocks:
+      - kind: forecast
+      - kind: progress
+        title: Build progress
+        done: {$count: '^\|\s*\d+\.\d+\s*\|.*✅', file: README.md, fallback: "17"}
+        total: {$count: '^\|\s*\d+\.\d+\s*\|', file: README.md, fallback: "19"}
+        text: [{$match: '(\d+) backend tests pass', file: README.md, fallback: "159"},
+               " backend tests pass. Shipped: access control, beds and admissions, data ingestion, ARIMA, Prophet and LSTM forecasts, MLflow tracking, what-if simulation and the MILP optimizer."]
+        next: ["Next: ", {$match: 'The next steps are (.+?)\.', file: README.md, fallback: "a review screen for optimizer plans, then agent orchestration with RAG"}, "."]
+
+  - repo: open-env-nuclei
+    layout: feature
+    colour: indigo
+    title: OpenEnv
+    status: Live demo on Hugging Face
+    desc: >-
+      An environment where an agent cleans a dirty table one action at a time and is graded
+      against a hidden clean copy. A PPO agent trained in it matches a hand-written expert,
+      and a zero-shot LLM trails on the hardest task.
+    built: Built with OpenEnv, FastAPI, pandas, Stable-Baselines3 and Hugging Face Spaces, together with Chetan Gadhiya and Sahaj Saliya.
+    links:
+      - [Try the OpenEnv live demo, "https://chetangadhiya017-data-cleaning-env.hf.space"]
+    blocks:
+      - kind: dots
+        title: Final grader score, hardest task
+        note: Mean ± std over held-out seeds
+        axis: 1.0 is a perfect restore
+        decimals: 3
+        rows:
+          - label: PPO agent, trained
+            value: {$cell: '^rl-ppo', col: 3, pick: 0, file: README.md, fallback: "0.967"}
+            sd: {$cell: '^rl-ppo', col: 3, pick: 1, file: README.md, fallback: "0.004"}
+            ours: true
+          - label: Rule-based expert
+            value: {$cell: '^rule-based', col: 3, pick: 0, file: README.md, fallback: "0.968"}
+            sd: {$cell: '^rule-based', col: 3, pick: 1, file: README.md, fallback: "0.003"}
+          - label: Llama 3.1 8B, zero-shot
+            value: {$cell: '^LLM', col: 3, pick: 0, file: README.md, fallback: "0.838"}
+            sd: {$cell: '^LLM', col: 3, pick: 1, file: README.md, fallback: "0.037"}
+          - label: Do nothing
+            value: {$cell: '^do-nothing', col: 3, pick: 0, file: README.md, fallback: "0.608"}
+          - label: Random actions
+            value: {$cell: '^random', col: 3, pick: 0, file: README.md, fallback: "0.534"}
+            sd: {$cell: '^random', col: 3, pick: 1, file: README.md, fallback: "0.058"}
+      - kind: note
+        text: The trained policy never issues an invalid action. Reward and final score are kept separate, so going in circles earns nothing.
+
+  # ------------------------------------------------------------------ cards
+  - repo: MDT-AI-Copilot
+    layout: card
+    colour: amber
+    title: MDT AI Copilot
+    desc: Anomaly detection, forecasting and a plain-English assistant over 5G measurement data.
+    stack: Python, LangGraph, scikit-learn, Chroma, FastAPI
+
+  - repo: misinformation_ai_hil
+    layout: card
+    colour: green
+    title: Misinformation AI
+    desc: Two AI agents research a post on the web and return a sourced verdict on each claim.
+    stack: Next.js, FastAPI, CrewAI, Gemini
+
+  - repo: IoT-Workshop-hackethon
+    layout: card
+    colour: slate
+    title: Senso Gown
+    desc: A hospital gown with sensors that streams vitals to a live dashboard and sends SMS alerts.
+    stack: ESP8266, MySQL, Twilio
+
+skills:
+  - [Machine learning, [scikit-learn, pandas, NumPy, PyTorch, ONNX, ARIMA, Prophet, Reinforcement learning]]
+  - [LLM systems, [LangGraph, LangChain, CrewAI, RAG, Chroma, Ollama, Gemma, Llama 3]]
+  - [Backend and data, [Python, FastAPI, PostgreSQL, Neo4j, MongoDB, SQLite, Redis, Docker]]
+  - [Frontend, [React, Next.js, TypeScript, Tailwind CSS, Vite]]
+  - [Fundamentals, [Data structures and algorithms, Object-oriented design, Testing, C++, SQL, Git]]
+
+recognition:
+  - [amber, Top 25, Smart India Hackathon, "2024, and again in 2025"]
+  - [indigo, Elite, NPTEL, Deep Learning certification]
+  - [green, Certified, ISRO-IIRS, Artificial intelligence and ML]

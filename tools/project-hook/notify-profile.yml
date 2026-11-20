@@ -1,0 +1,21 @@
+# Optional: copy this file into a project repository as
+# .github/workflows/notify-profile.yml to refresh the profile within a minute
+# of every push, instead of waiting for the hourly run.
+#
+# One-time setup: create a fine-grained personal access token with
+# "Contents: read and write" on HilKalathiya/HilKalathiya only, and add it to
+# the project repository as the secret PROFILE_TOKEN.
+name: Notify profile
+on:
+  push:
+    branches: [main]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.PROFILE_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/HilKalathiya/HilKalathiya/dispatches \
+            -d '{"event_type":"project-updated"}'
